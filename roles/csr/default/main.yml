@@ -1,0 +1,7 @@
+csr_common_name: ""
+csr_organization_name: None
+csr_organization_unit_name: None
+csr_email_address: "{{ omit }}"
+csr_country_name: US
+csr_state_or_province_name: "{{ omit }}"
+csr_locality_name: "{{ omit }}"

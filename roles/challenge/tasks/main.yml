@@ -1,0 +1,13 @@
+- name: challenge the request
+  acme_certificate:
+    account_key_src: "{{ account_key }}"
+    acme_directory: "https://acme-v02.api.letsencrypt.org/directory"
+    acme_version: 2
+    src: "{{ csr }}"
+    dest: "{{ cert }}"
+    chain_dest: "{{ chain }}"
+    fullchain_dest: "{{ fullchain }}"
+    challenge: "{{ challenge_type }}"
+    remaining_days: 30
+    data: "{{ challenge | default(omit) }}"
+  register: challenge

@@ -1,0 +1,27 @@
+#!/usr/bin/ansible-playbook
+---
+- name: manage ssl certificates
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  vars:
+    workdir: /var/certs
+
+  tasks:
+    - name: remove account
+      acme_account:
+        acme_directory: "https://acme-v02.api.letsencrypt.org/directory"
+        acme_version: 2
+        account_key_src: "{{ workdir }}/account.key"
+        state: absent
+
+    - name: remove account key
+      file:
+        path: "{{ workdir }}/account.key"
+        state: absent
+
+    - name: remove account URI
+      file:
+        path: "{{ workdir }}/account"
+        state: absent

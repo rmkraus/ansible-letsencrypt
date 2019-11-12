@@ -1,0 +1,10 @@
+- name: Cleanup DNS records
+  shell: >
+    lexicon easydns \
+      --auth-username="{{ cleanup_easydns_api_token }}" \
+      --auth-token="{{ cleanup_easydns_api_key }}" \
+      delete "{{ cleanup_easydns_domain }}" TXT \
+      --name "{{ lookup('dict', challenge.challenge_data_dns).key }}" \
+  tags:
+    - cleanup-easydns
+      

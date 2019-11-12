@@ -1,0 +1,37 @@
+- name: ensure required packages are installed
+  yum:
+    name: python2-dns-lexicon, python2-boto3, openssl, openssl-libs
+    state: installed
+  tags:
+    - setup
+
+- name: ensure cert output directory exists
+  file:
+    path: "{{ setup_workdir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+  tags:
+    - setup
+
+- name: ensure cert output directory exists for this host
+  file:
+    path: "{{ setup_workdir }}/{{ setup_fqdn }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+  tags:
+    - setup
+
+- name: save paths
+  set_fact:
+    privkey: "{{ setup_workdir }}/{{setup_fqdn }}/privkey.pem"
+    csr: "{{ setup_workdir }}/{{setup_fqdn }}/csr.pem"
+    cert: "{{ setup_workdir }}/{{setup_fqdn }}/cert.pem"
+    fullchain: "{{ setup_workdir }}/{{setup_fqdn }}/fullchain.pem"
+    chain: "{{ setup_workdir}}/{{setup_fqdn }}/chain.pem"
+    account_key: "{{ setup_workdir }}/account.key"
+  tags:
+    - csr

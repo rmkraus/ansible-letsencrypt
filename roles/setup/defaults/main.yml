@@ -1,0 +1,2 @@
+setup_workdir: /var/certs
+setup_fqdn: ""

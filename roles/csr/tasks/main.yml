@@ -1,0 +1,21 @@
+- name: generate private key
+  openssl_privatekey:
+    path: "{{ privkey }}"
+    backup: yes
+  tags:
+    - csr
+
+- name: generate csr
+  openssl_csr:
+    path: "{{ csr }}"
+    privatekey_path: "{{ privkey }}"
+    backup: yes
+    common_name: "{{ csr_common_name }}"
+    organization_name: "{{ csr_organization_name }}"
+    organizational_unit_name: "{{ csr_state_or_province_name }}"
+    email_address: "{{ csr_email_address }}"
+    country_name: "{{ csr_country_name }}"
+    state_or_province_name: "{{ csr_state_or_province_name }}"
+    locality_name: "{{ csr_locality_name }}"
+  tags:
+    - csr

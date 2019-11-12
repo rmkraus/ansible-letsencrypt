@@ -1,0 +1,37 @@
+#!/usr/bin/ansible-playbook
+---
+- name: manage ssl certificates
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  vars:
+    workdir: /var/certs
+
+  vars_prompt:
+    - name: email
+      prompt: "Contact Email Address"
+      type: String
+      private: no
+
+  tasks:
+    - name: generate account key
+      openssl_privatekey:
+        path: "{{ workdir }}/account.key"
+
+    - name: login to letsencrypt
+      acme_account:
+        acme_directory: "https://acme-v02.api.letsencrypt.org/directory"
+        acme_version: 2
+        account_key_src: "{{ workdir }}/account.key"
+        state: present
+        terms_agreed: yes
+        contact:
+          - "mailto:{{ email }}"
+      register: login
+
+    - name: save account URI
+      lineinfile:
+        line: "{{ login.account_uri }}"
+        path: "{{ workdir }}/account"
+        create: yes

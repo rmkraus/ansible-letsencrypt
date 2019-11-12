@@ -1,0 +1,11 @@
+- name: set DNS challenge with EasyDNS
+  shell: >
+    lexicon easydns \
+      --auth-username="{{ verify_easydns_api_token }}" \
+      --auth-token="{{ verify_easydns_api_key }}" \
+      create "{{ verify_easydns_domain }}" TXT \
+      --name "{{ lookup('dict', challenge.challenge_data_dns).key }}" \
+      --content "{{ lookup('dict', challenge.challenge_data_dns).value.0 }}"
+  tags:
+    - verify-easydns
+      
