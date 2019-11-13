@@ -18,6 +18,7 @@
     - name: generate account key
       openssl_privatekey:
         path: "{{ workdir }}/account.key"
+      delegate_to: "{{ delegation_target | default(localhost) }}"
 
     - name: login to letsencrypt
       acme_account:
@@ -29,9 +30,11 @@
         contact:
           - "mailto:{{ email }}"
       register: login
+      delegate_to: "{{ delegation_target | default(localhost) }}"
 
     - name: save account URI
       lineinfile:
         line: "{{ login.account_uri }}"
         path: "{{ workdir }}/account"
         create: yes
+      delegate_to: "{{ delegation_target | default(localhost) }}"

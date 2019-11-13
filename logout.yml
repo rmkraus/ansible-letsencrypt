@@ -15,13 +15,16 @@
         acme_version: 2
         account_key_src: "{{ workdir }}/account.key"
         state: absent
+      delegate_to: "{{ delegation_target | default(localhost) }}"
 
     - name: remove account key
       file:
         path: "{{ workdir }}/account.key"
         state: absent
+      delegate_to: "{{ delegation_target | default(localhost) }}"
 
     - name: remove account URI
       file:
         path: "{{ workdir }}/account"
         state: absent
+      delegate_to: "{{ delegation_target | default(localhost) }}"

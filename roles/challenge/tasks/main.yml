@@ -11,3 +11,4 @@
     remaining_days: 30
     data: "{{ challenge | default(omit) }}"
   register: challenge
+  delegate_to: "{{ delegation_target | default(localhost) }}"

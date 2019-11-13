@@ -7,4 +7,5 @@
       --name "{{ lookup('dict', challenge.challenge_data_dns).key }}" \
   tags:
     - cleanup-easydns
+  delegate_to: "{{ delegation_target | default(localhost) }}"
       

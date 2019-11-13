@@ -4,6 +4,7 @@
     backup: yes
   tags:
     - csr
+  delegate_to: "{{ delegation_target | default(localhost) }}"
 
 - name: generate csr
   openssl_csr:
@@ -19,3 +20,4 @@
     locality_name: "{{ csr_locality_name }}"
   tags:
     - csr
+  delegate_to: "{{ delegation_target | default(localhost) }}"
