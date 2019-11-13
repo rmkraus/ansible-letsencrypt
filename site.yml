@@ -60,7 +60,7 @@
 
     - name: Verify ACME Challenge
       include_role:
-        name: verify-easydns 
+        name: verify-easydns
       vars:
         verify_easydns_api_token: "{{ easydns_api_token }}"
         verify_easydns_api_key: "{{ easydns_api_key }}"
@@ -74,7 +74,7 @@
 
     - name: Cleanup ACME Challenge
       include_role:
-        name: cleanup-easydns 
+        name: cleanup-easydns
       vars:
         cleanup_easydns_api_token: "{{ easydns_api_token }}"
         cleanup_easydns_api_key: "{{ easydns_api_key }}"
@@ -86,5 +86,5 @@
         name: publish-s3
       vars:
         publish_s3_bucket: "{{ aws_keys_bucket }}"
-        publish_s3_secret_key: "{{ aws_secret_key }}"
-        publish_s3_access_key: "{{ aws_access_key }}"
+        publish_s3_secret_key: "{{ aws_secret_key | default(lookup('env', 'AWS_SECRET_ACCESS_KEY')) }}"
+        publish_s3_access_key: "{{ aws_access_key | default(lookup('env', 'AWS_ACCESS_KEY_ID')) }}"
