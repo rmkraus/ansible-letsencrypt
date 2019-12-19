@@ -1,0 +1,94 @@
+#!/usr/bin/ansible-playbook
+---
+- name: manage ssl certificates
+  hosts: localhost
+  become: yes
+  gather_facts: no
+
+  vars:
+    workdir: /var/certs
+
+  vars_prompt:
+    - name: cn
+      prompt: Common Name
+      type: String
+      private: no
+    - name: o
+      prompt: Organization Name
+      type: String
+      private: no
+    - name: ou
+      prompt: Organizational Unit Name
+      type: String
+      private: no
+    - name: e
+      prompt: Email Address
+      type: String
+      private: no
+    - name: c
+      prompt: Country Name
+      type: String
+      private: no
+    - name: st
+      prompt: State or Province Name
+      type: String
+      private: no
+    - name: l
+      prompt: Locality
+      type: String
+      private: no
+
+  tasks:
+    - name: Setup Let's Encrypt Client
+      include_role:
+        name: setup
+      vars:
+        setup_workdir: "{{ workdir }}"
+        setup_fqdn: "{{ cn }}"
+
+    - name: Generate Private Key and CSR
+      include_role:
+        name: csr
+      vars:
+        csr_common_name: "{{ cn }}"
+        csr_organization_name: "{{ o }}"
+        csr_organization_unit_name: "{{ ou }}"
+        csr_email_address: "{{ e }}"
+        csr_country_name: "{{ c }}"
+        csr_state_or_province_name: "{{ st }}"
+        csr_locality_name: "{{ l }}"
+
+    - name: Generate ACME Challenge
+      include_role:
+        name: challenge
+
+    - name: Verify ACME Challenge
+      include_role:
+        name: verify-easydns
+      vars:
+        verify_easydns_api_token: "{{ easydns_api_token }}"
+        verify_easydns_api_key: "{{ easydns_api_key }}"
+        verify_easydns_domain: "{{ easydns_domain }}"
+      when: challenge is changed
+
+    - name: Check Challenge Verification, Generate Certs
+      include_role:
+        name: challenge
+      when: challenge is changed
+
+    - name: Cleanup ACME Challenge
+      include_role:
+        name: cleanup-easydns
+      vars:
+        cleanup_easydns_api_token: "{{ easydns_api_token }}"
+        cleanup_easydns_api_key: "{{ easydns_api_key }}"
+        cleanup_easydns_domain: "{{ easydns_domain }}"
+      when: challenge is changed
+
+    - name: Publish to Artifact Repository
+      include_role:
+        name: publish-s3
+      vars:
+        publish_s3_bucket: "{{ aws_keys_bucket }}"
+        publish_s3_secret_key: "{{ aws_secret_key | default(lookup('env', 'AWS_SECRET_ACCESS_KEY')) }}"
+        publish_s3_access_key: "{{ aws_access_key | default(lookup('env', 'AWS_ACCESS_KEY_ID')) }}"

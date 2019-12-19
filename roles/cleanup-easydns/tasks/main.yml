@@ -8,4 +8,5 @@
   tags:
     - cleanup-easydns
   delegate_to: "{{ delegation_target | default(localhost) }}"
-      
+  ignore_errors: yes
+
